@@ -35,12 +35,12 @@ class list{
 		void keyList();
 		void randList();
 		void fileList();
-		void revertList();
-		void bubbleSort();
-		void selectionSort();
-		void insertionSort();
-		void quickSort();
-		void mergeSort();
+		void bubbleSort(char dir);
+		void selectionSort(char dir);
+		void insertionSort(char dir);
+		void quickSort(char dir);
+		void mergeSort(char dir);
+		node* partition(node **f, node **l, char dir);
 	public:
 		void createList();
 		void getList();
@@ -60,16 +60,37 @@ void list::swapData(node *&p1, node *&p2){
 	p2->value = temp;
 }
 //----------------------------------------------------------------
- void list::revertList(){
-	node *t1 = first;
-	node *t2 = NULL;
-	while(first!=NULL){
-		t1 = first;			// [t2]<-[],[t1=first]
-		first = first->next;// [t1]->[first]->
-		t1->next = t2;		// [t2]<-[t1],[first]->
-		t2 = t1;			// [t1=t2],[first]
+node* list::partition(node **f, node **l, char dir){
+	node *flag = last; //danh dau nut cuoi danh sach
+	node *i = first;
+	node *prev = NULL;
+	node *temp;
+	node *t = flag;
+	//bat dau phan doan danh sach
+	while(i!=flag){
+		//nut dang xet nho/lon hon nut danh dau
+		if(i->value < flag->value && dir == '1'
+		   or i->value > flag->value && dir == '2'){
+			//dat nut dang xet lam nut dau danh sach phan doan
+			if(*f==NULL) *f = i;
+			prev = i;
+			i = i->next;
+		}
+		//cac truong hop con lai
+		else{
+			//dat nut dang xet ra sau nut cuoi danh sach
+			if(prev) prev->next = i->next;
+			temp = i->next;//luu vi tri tiep theo cua nut dang xet
+			t->next = i;
+			i->next = NULL;
+			t = i;
+			i = temp;//duyet tiep danh sach
+		}
 	}
-	first = t1;				// ..<-[first=t1]
+	//neu danh sach chua phan doan
+	if(*f==NULL) *f = flag; //dat nut danh dau lam dau danh sach phan doan
+	*l = t; //dat nut cuoi lam nut cuoi cua danh sach phan doan
+	return flag;
 }
 //----------------------------------------------------------------
  void list::keyList(){
@@ -153,23 +174,26 @@ void list::swapData(node *&p1, node *&p2){
 //----------------------------------------------------------------
  void list::search(){
 	int i;
-	writefile(f); //ghi tiep vao file ket qua
-	node *cursor;
-	cout<<"\nNhap gia tri can tim: ";
-	cin>>i;
-	fflush(stdin); //xoa cache
-	fprintf(f, "\nGia tri can tim: %d\n", i);
-	cursor = first;
-	while(cursor != NULL && cursor->value != i) cursor = cursor->next;
-	if(cursor == NULL){
-		cout<<"Khong tim thay gia tri\n";
-		fprintf(f,"Khong tim thay gia tri\n");
+	//Thuc hien tim kiem khi danh sach co nut
+	if(first!=NULL){
+		writefile(f); //ghi tiep vao file ket qua
+		node *cursor;
+		cout<<"\nNhap gia tri can tim: ";
+		cin>>i;
+		fflush(stdin); //xoa cache
+		fprintf(f, "\nGia tri can tim: %d\n", i);
+		cursor = first;
+		while(cursor != NULL && cursor->value != i) cursor = cursor->next;
+		if(cursor == NULL){
+			cout<<"Khong tim thay gia tri\n";
+			fprintf(f,"Khong tim thay gia tri\n");
+		}
+		else{
+			cout<<"Da tim thay gia tri: "<<cursor->value<<endl;
+			fprintf(f,"Da tim thay gia tri: %d\n", cursor->value);
+		}
+		fclose(f);
 	}
-	else{
-		cout<<"Da tim thay gia tri: "<<cursor->value<<endl;
-		fprintf(f,"Da tim thay gia tri: %d\n", cursor->value);
-	}
-	fclose(f);
 }
 //----------------------------------------------------------------
  void list::getList(){
@@ -193,53 +217,59 @@ void list::swapData(node *&p1, node *&p2){
 	fclose(f); //dong file sau khi ghi ket qua
 }
 //----------------------------------------------------------------
- void list::bubbleSort(){
+ void list::bubbleSort(char dir){
  	int temp;
 	node *i, *j;
 	i = first;
 	while(i!=last){
 		j = i->next;
 		while(j!=NULL){
-			if(i->value > j->value){
+			if(i->value > j->value && dir == '1' or i->value < j->value && dir == '2')
 				swapData(i, j);
-			}
 			j = j->next;
 		}
 		i = i->next;
 	}
 }
 //----------------------------------------------------------------
- void list::selectionSort(){
+ void list::selectionSort(char dir){
 	node *flag = first; //danh dau node can sap xep
-	node *i, *min;
+	node *i, *m;
 	while(flag!=last){
-		min = flag; //dat node danh dau la node be nhat
+		m = flag; //dat node danh dau la node be/lon nhat
 		i = flag->next;
 		while(i!=NULL){
-			if(i->value < min->value) min = i; //cap nhat node be nhat
+			if(i->value < m->value  && dir == '1' or i->value > m->value  && dir == '2')
+				m = i; //cap nhat node be/lon nhat
 			i = i->next;
 		}
-		if(min->value < flag->value) swapData(min, flag); //thay doi gia tri node dau danh sach
+		if(m->value < flag->value && dir == '1' or m->value > flag->value && dir == '2' )
+			swapData(m, flag); //thay doi gia tri node dau danh sach
 		flag = flag->next;
 	}
  }
 //----------------------------------------------------------------
- void list::insertionSort(){
+ void list::insertionSort(char dir){
  	node *sorted = NULL; //tao danh sach sap xep
  	node *p = first;
  	node *pn;
  	while(p!=NULL){		//duyet danh sach
  		pn = p->next;	//luu nut tiep thep cua p vi nut nay se bi thay doi
- 		//neu danh sach sap xep rong hoac nut p nho hon, them nut p vao dau danh sach
- 		if(sorted == NULL || sorted->value >= p->value){
+ 		//neu danh sach sap xep rong hoac nut p nho/lon hon nut dau
+ 		if(sorted == NULL or sorted->value >= p->value && dir == '1'
+		 	or sorted->value < p->value && dir == '2'){
+			//them nut p vao dau danh sach
  			p->next = sorted;
  			sorted = p;
 		}
 		//tim vi tri thich hop de chen nut p vao danh sach sap xep
 		else{
 			node *i = sorted;
-			//duyet danh sach de tim nut co nut sau lon hon nut p
-			while(i->next!=NULL && i->next->value < p->value) i = i->next;
+			//duyet danh sach de tim nut co nut sau lon/nho hon nut p
+			while(i->next!=NULL && i->next->value < p->value && dir == '1'
+				or i->next!=NULL && i->next->value > p->value && dir == '2'
+			)
+				i = i->next;
 			//chen nut p vao sau nut tim duoc
 			p->next = i->next;
 			i->next = p;
@@ -249,14 +279,18 @@ void list::swapData(node *&p1, node *&p2){
 	first = sorted; //chuyen con tro dau sang danh sach da sap xep
  }
 //----------------------------------------------------------------
- void list::quickSort(){}
+ void list::quickSort(char dir){
+ 	node *f = NULL;
+ 	node *l = NULL;
+ 	node *flag = partition(&f, &l, dir);
+ }
 //----------------------------------------------------------------
- void list::mergeSort(){}
+ void list::mergeSort(char dir){}
 //----------------------------------------------------------------
  void list::sortList(){
- 	char opt;
- 	//tien hanh sap xep neu danh sach 
- 	if(first->next!=NULL){
+ 	char opt, dir;
+ 	//tien hanh sap xep neu danh sach co nhieu hon mot nut
+ 	if(first!=NULL && first->next!=NULL){
  		writefile(f);
  		cout<<"\nChon phuong phap sap xep:\n";
  		cout<<"1. Bubble sort\n";
@@ -269,41 +303,39 @@ void list::swapData(node *&p1, node *&p2){
  			cin>>opt;
 		}while(opt!='1' && opt!='2' && opt!='3' && opt!='4' && opt!='5');
 		fflush(stdin); //xoa cache
-		
-		//Cac phuong thuc sap xep mac dinh la sap xep tang dan
-		switch(opt){
- 			case('1'): {
-			  	bubbleSort();
-				break;
-			 	}
-			case('2'):{
-			  	selectionSort();
-				break;
-			}
-			case('3'):{
-				insertionSort();
-				break;
-			}
-			case('4'):{
-				quickSort();
-				break;
-			}
-			case('5'):{
-				mergeSort();
-				break;
-			}
-		}
-		opt = 0; //dat lai bien lua chon
 		//chon chieu danh sach
 		cout<<"\nChon chieu sap xep\n";
 		cout<<"1. Tang dan\n";
 		cout<<"2. Giam dan\n";
 		do{
 			cout<<"Lua chon: ";
-			cin>>opt;
-		}while(opt!='1' && opt!='2');
+			cin>>dir;
+		}while(dir!='1' && dir!='2');
 		fflush(stdin); //xoa cache
-		if(opt=='2') revertList(); //dao nguoc danh sach neu chon chieu giam dan
+		//Cac phuong thuc sap xep
+		switch(opt){
+ 			case('1'): {
+			  	bubbleSort(dir);
+				break;
+			 	}
+			case('2'):{
+			  	selectionSort(dir);
+				break;
+			}
+			case('3'):{
+				insertionSort(dir);
+				break;
+			}
+			case('4'):{
+				quickSort(dir);
+				break;
+			}
+			case('5'):{
+				mergeSort(dir);
+				break;
+			}
+		}
+		
 		cout<<"\nDanh sach sau khi sap xep:";
 		fprintf(f,"\nDanh sach da sap xep:\n");
 		fclose(f);
@@ -314,7 +346,7 @@ void list::swapData(node *&p1, node *&p2){
 int main(){
 	clearfile(f); //Xoa noi dung co san trong file ket qua
 	list l;
-	cout<<"---CHUONG TRINH MO PHONG TIM KIEM VA SAP XEP DANH SACH LIEN KET---\n";
+	cout<<"---CHUONG TRINH TIM KIEM VA SAP XEP DANH SACH LIEN KET---\n";
 	l.createList();
 	l.search();
 	l.sortList();
