@@ -38,31 +38,38 @@ class list{
 		void bubbleSort(char dir);
 		void selectionSort(char dir);
 		void insertionSort(char dir);
-		void quickSort(char dir);
 		void mergeSort(char dir);
-		node* partition(node **f, node **l, char dir);
+		node* getLast(node *f);
+		node* partition(node *pfirst, node *plast, node *&f, node *&l, char dir);
+		void quickSort(node *&pfirst, node *&plast, char dir);
 	public:
+		list(){first = NULL; last = NULL;}
 		void createList();
 		void getList();
 		void search();
 		void sortList();
 };
 //----------------------------------------------------------------
-void list::linkNode(node *&p){
+ void list::linkNode(node *&p){
 	if(first==NULL) first = p;
 	else last->next = p;
 	last = p;
 }
 //----------------------------------------------------------------
-void list::swapData(node *&p1, node *&p2){
+ void list::swapData(node *&p1, node *&p2){
 	int temp = p1->value;
 	p1->value = p2->value;
 	p2->value = temp;
 }
 //----------------------------------------------------------------
-node* list::partition(node **f, node **l, char dir){
-	node *flag = last; //danh dau nut cuoi danh sach
-	node *i = first;
+ node* list::getLast(node *f){
+ 	if(f!=NULL) while(f->next!=NULL) f = f->next;
+ 	return f;
+ }
+//----------------------------------------------------------------
+ node* list::partition(node *pfirst, node *plast, node *&f, node *&l, char dir){
+	node *flag = plast; //danh dau nut cuoi danh sach
+	node *i = pfirst;
 	node *prev = NULL;
 	node *temp;
 	node *t = flag;
@@ -72,7 +79,7 @@ node* list::partition(node **f, node **l, char dir){
 		if(i->value < flag->value && dir == '1'
 		   or i->value > flag->value && dir == '2'){
 			//dat nut dang xet lam nut dau danh sach phan doan
-			if(*f==NULL) *f = i;
+			if(f==NULL) f = i;
 			prev = i;
 			i = i->next;
 		}
@@ -88,8 +95,8 @@ node* list::partition(node **f, node **l, char dir){
 		}
 	}
 	//neu danh sach chua phan doan
-	if(*f==NULL) *f = flag; //dat nut danh dau lam dau danh sach phan doan
-	*l = t; //dat nut cuoi lam nut cuoi cua danh sach phan doan
+	if(f==NULL) f = flag; //dat nut danh dau lam dau danh sach phan doan
+	l = t; //dat nut cuoi lam nut cuoi cua danh sach phan doan
 	return flag;
 }
 //----------------------------------------------------------------
@@ -97,7 +104,6 @@ node* list::partition(node **f, node **l, char dir){
 	string key;
 	int i;
 	node *p;
-	first = NULL; //khoi tao danh sach
 	do{
 		cout<<"Nhap so nguyen (Nhap ky tu trong de dung): ";
 		getline(cin, key);
@@ -117,7 +123,6 @@ node* list::partition(node **f, node **l, char dir){
 	string key;
 	int n, c, i;
 	node *p;
-	first = NULL; //khoi tao danh sach
 	srand(time(NULL)); //tao seed cho ham random
 	do{
 		cout<<"Nhap do dai danh sach: ";
@@ -141,7 +146,6 @@ node* list::partition(node **f, node **l, char dir){
 	else{
 		node *p;
 		int i;
-		first = NULL; //khoi tao danh sach
 		do{
 			fscanf(f, "%d", &i);
 			p = new node;
@@ -279,10 +283,28 @@ node* list::partition(node **f, node **l, char dir){
 	first = sorted; //chuyen con tro dau sang danh sach da sap xep
  }
 //----------------------------------------------------------------
- void list::quickSort(char dir){
- 	node *f = NULL;
- 	node *l = NULL;
- 	node *flag = partition(&f, &l, dir);
+ void list::quickSort(node *&pfirst, node *&plast, char dir){
+ 	//neu phan doan co nhieu hon 2 nut
+ 	if(pfirst!=NULL && pfirst != plast){
+ 		node *temp;
+		node *f=NULL;
+ 		node *l=NULL;
+		node *flag = partition(pfirst, plast, f, l, dir);
+ 		//neu dau phan doan khac nut danh dau
+ 		if(f!=flag){
+ 		//cat phan doan moi tu phia ben trai danh sach
+ 			temp = f;
+			while(temp->next != flag) temp = temp->next;
+ 			temp->next = NULL;
+ 			quickSort(f, temp, dir); //lap lai cac buoc sap xep cho phan doan moi	
+ 			temp = getLast(f);	//tim nut cuoi cua phan doan moi
+ 			temp->next = flag;	//lien ket phan doan moi vao lai danh sach
+		}
+		//lam tuong tu voi phia ben phai danh sach
+		quickSort(flag->next, l, dir);
+		//cap nhat dau phan doan
+		pfirst = f;
+	}
  }
 //----------------------------------------------------------------
  void list::mergeSort(char dir){}
@@ -327,7 +349,7 @@ node* list::partition(node **f, node **l, char dir){
 				break;
 			}
 			case('4'):{
-				quickSort(dir);
+				quickSort(first, last, dir);
 				break;
 			}
 			case('5'):{
@@ -345,11 +367,11 @@ node* list::partition(node **f, node **l, char dir){
 //----------------------------------------------------------------
 int main(){
 	clearfile(f); //Xoa noi dung co san trong file ket qua
-	list l;
+	list *l = new list;
 	cout<<"---CHUONG TRINH TIM KIEM VA SAP XEP DANH SACH LIEN KET---\n";
-	l.createList();
-	l.search();
-	l.sortList();
+	l->createList();
+	l->search();
+	l->sortList();
 	cout<<"\nNhan Enter de dong chuong trinh";
 	getchar();
 	return 0;
