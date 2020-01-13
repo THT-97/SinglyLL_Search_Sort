@@ -2,11 +2,24 @@
 // abcxyz tcIT
 #include <stdio.h>
 #include <conio.h>
+#include <iostream>	//cin, cout
+#include <sstream>	//stringstream
+#include <time.h>	//ham random
+#include <string>
+#include <windows.h>
+//--------------------------------------------------------
+#define readfile(f) FILE *f = fopen("./list_input.txt","r")
+#define writefile(f) FILE *f = fopen("./results.txt","a")
+
+#define clearfile(f) \
+		FILE *f = fopen("./results.txt", "w");\
+		fprintf(f, " ");\
+		fclose(f)
+//--------------------------------------------------------
 #ifndef _console_header
 #define _console_header
-
-
-#define ColorCode_Back			0
+//--------------------------------------------------------
+#define ColorCode_Black			0
 #define ColorCode_DarkBlue		1
 #define ColorCode_DarkGreen		2
 #define ColorCode_DarkCyan		3
@@ -22,9 +35,7 @@
 #define ColorCode_Pink			13
 #define ColorCode_Yellow		14
 #define ColorCode_White			15
-
 #define default_ColorCode		7
-
 
 #define key_Up		1072
 #define key_Down	1080
@@ -33,9 +44,7 @@
 #define key_none	-1
 
 //--------------------------------------------------------
-
-#include <windows.h>
-
+using namespace std;
 //--------------------------------------------------------
 
 int inputKey()
@@ -88,16 +97,29 @@ void gotoXY (int column, int line)
 }
 
 //screen: get [x]
-int whereX();
-
+int whereX(){
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    return csbi.dwCursorPosition.X;
+}
 //screen: get [y]
-int whereY();
+int whereY(){
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    return csbi.dwCursorPosition.Y;
+}
 
 void TextColor (int color)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE) , color);
 }
-//end----------------------Screen----------------------end
 
+
+int getScreen(){
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if(!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
+		cout<<"Khong lay duoc kich thuoc man hinh"<<endl;
+	else return csbi.srWindow.Right-csbi.srWindow.Left;
+}
 
 #endif
