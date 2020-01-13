@@ -208,16 +208,16 @@ void list::swapData(node *&p1, node *&p2){
 }
 //----------------------------------------------------------------
  void list::selectionSort(){
-	node *flag = first; //danh dau node dau danh sach
+	node *flag = first; //danh dau node can sap xep
 	node *i, *min;
-	min = flag; //dat dau danh sach la node be nhat
 	while(flag->next!=NULL){
+		min = flag; //dat node danh dau la node be nhat
 		i = flag->next;
 		while(i!=NULL){
 			if(i->value < min->value) min = i; //cap nhat node be nhat
 			i = i->next;
 		}
-		if(min->value < flag->value) swapData(min, flag); //thay doi node dau danh sach
+		if(min->value < flag->value) swapData(min, flag); //thay doi gia tri node dau danh sach
 		flag = flag->next;
 	}
  }
@@ -288,5 +288,7 @@ int main(){
 	l.createList();
 	l.search();
 	l.sortList();
+	cout<<"\nNhan nut bat ki de dong chuong trinh";
+	getchar();
 	return 0;
 }
