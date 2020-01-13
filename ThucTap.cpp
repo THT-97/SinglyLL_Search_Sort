@@ -68,7 +68,7 @@ class list{
 	while(i!=flag){
 		//nut dang xet nho/lon hon nut danh dau
 		if((i->value < flag->value && dir =='1')or(i->value > flag->value && dir=='2')){
-			//dat nut dang xet lam nut dau danh sach phan doan
+			//dat nut dang xet lam nut dau phan doan
 			if(f==NULL) f = i;
 			prev = i;
 			i = i->next;
@@ -85,8 +85,8 @@ class list{
 		}
 	}
 	//neu danh sach chua phan doan
-	if(f==NULL) f = flag; //dat nut danh dau lam dau danh sach phan doan
-	l = t; //dat nut cuoi lam nut cuoi cua danh sach phan doan
+	if(f==NULL) f = flag; //dat nut danh dau lam dau phan doan
+	l = t; //dat nut cuoi lam nut cuoi cua phan doan
 	return flag;
 }
 //----------------------------------------------------------------
@@ -180,7 +180,9 @@ class list{
 //----------------------------------------------------------------
  void list::createList(){
 	char opt; //lua chon cach tao danh sach
+	TextColor(7);
 	cout<<"Chon cach nhap danh sach:\n";
+	TextColor(15);
 	cout<<"1. Nhap tu ban phim\n";
 	cout<<"2. Lay so ngau nhien\n";
 	cout<<"3. Doc so tu file 'list_input.txt'\n";
@@ -188,10 +190,10 @@ class list{
 	do{
 		cout<<"Lua chon: ";
 		cin>>opt;
+		fflush(stdin); //xoa cache
 	}while(opt!='1' && opt!='2' && opt!='3' && opt!='4');
 	cout<<endl; //xuong dong
 	//tao danh sach theo lua chon hoac thoat
-	fflush(stdin); //xoa cache
 	if(opt=='1') keyList();
 	else if(opt=='2') randList();
 	else if(opt=='3') fileList();
@@ -204,19 +206,29 @@ class list{
 	if(first!=NULL){
 		writefile(f); //ghi tiep vao file ket qua
 		node *cursor;
+		int c = 0;
 		cout<<"\nNhap gia tri can tim: ";
 		cin>>i;
 		fflush(stdin); //xoa cache
 		fprintf(f, "\nGia tri can tim: %d\n", i);
 		cursor = first;
-		while(cursor != NULL && cursor->value != i) cursor = cursor->next;
-		if(cursor == NULL){
-			cout<<"Khong tim thay gia tri\n";
+		while(cursor != NULL){
+			if(cursor->value==i){
+				c++;
+				TextColor(11);
+			}	
+			cout<<cursor->value<<" ";
+			TextColor(15);
+			Sleep(300);
+			cursor = cursor->next;
+		}
+		if(c==0){
+			cout<<"\nKhong tim thay gia tri\n";
 			fprintf(f,"Khong tim thay gia tri\n");
 		}
 		else{
-			cout<<"Da tim thay gia tri: "<<cursor->value<<endl;
-			fprintf(f,"Da tim thay gia tri: %d\n", cursor->value);
+			cout<<"\nDa tim thay "<<c<<" nut co gia tri "<<i<<endl;
+			fprintf(f,"Da tim thay %d nut co gia tri %d\n", c, i);
 		}
 		fclose(f);
 	}
@@ -344,7 +356,9 @@ class list{
  	//tien hanh sap xep neu danh sach co nhieu hon mot nut
  	if(first!=NULL && first->next!=NULL){
  		writefile(f);
+ 		TextColor(7);
  		cout<<"\nChon phuong phap sap xep:\n";
+ 		TextColor(15);
  		cout<<"1. Bubble sort\n";
  		cout<<"2. Selection sort\n";
  		cout<<"3. Insertion sort\n";
@@ -353,8 +367,8 @@ class list{
  		do{
  			cout<<"Lua chon: ";
  			cin>>opt;
+			fflush(stdin); //xoa cache
 		}while(opt!='1' && opt!='2' && opt!='3' && opt!='4' && opt!='5');
-		fflush(stdin); //xoa cache
 		//chon chieu danh sach
 		cout<<"\nChon chieu sap xep\n";
 		cout<<"1. Tang dan\n";
@@ -362,8 +376,8 @@ class list{
 		do{
 			cout<<"Lua chon: ";
 			cin>>dir;
+			fflush(stdin); //xoa cache
 		}while(dir!='1' && dir!='2');
-		fflush(stdin); //xoa cache
 		//Cac phuong thuc sap xep
 		switch(opt){
  			case('1'): {
@@ -398,7 +412,10 @@ class list{
 int main(){
 	clearfile(f); //Xoa noi dung co san trong file ket qua
 	list *l = new list;
+	gotoXY(W/9, 0);
+	TextColor(14);
 	cout<<"---CHUONG TRINH TIM KIEM VA SAP XEP DANH SACH LIEN KET---\n";
+	TextColor(15);
 	l->createList();
 	l->search();
 	l->sortList();
