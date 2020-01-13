@@ -1,7 +1,7 @@
 // Tim kiem va sap xep tren danh sach lien ket OOP
 #include <iostream>
 #include <sstream>
-#include <fstream>
+#include <stdio.h>
 
 using namespace std;
 
@@ -9,8 +9,8 @@ class node{
 	protected:
 		int value;
 		node *next;
-		void setNode(int n){
-			value = n;
+		void setNode(int i){
+			value = i;
 			next = NULL;
 		}
 	friend class list; //class list co the truy xuat class node
@@ -80,7 +80,21 @@ void list::randList(){
 }
 
 void list::fileList(){
-	
+	FILE *f;
+	char path[] = "./list_input.txt"; //duong dan mac dinh
+	f = fopen(path, "r");
+	if(f==NULL) cout<<"Khong tim thay file 'list_input.txt'\n";
+	else{
+		node *p;
+		int i;
+		do{
+			fscanf(f, "%d", &i);
+			p = new node;
+			p->setNode(i);
+			link(p);
+		}while(fgetc(f)!=EOF); //doc den ki tu cuoi file
+	}
+	fclose(f); //dong file sau khi doc
 }
 
 void list::createList(){
@@ -89,7 +103,7 @@ void list::createList(){
 		cout<<"Chon cach nhap danh sach:\n";
 		cout<<"1. Nhap tu ban phim\n";
 		cout<<"2. Lay so ngau nhien\n";
-		cout<<"3. Doc so tu file\n";
+		cout<<"3. Doc so tu file 'list_input.txt'\n";
 		cout<<"4. Thoat\n";
 		cout<<"Lua chon: ";
 		cin>>opt;
