@@ -6,6 +6,7 @@
 
 #define readfile(f) FILE *f = fopen("./list_input.txt","r")
 #define writefile(f) FILE *f = fopen("./results.txt","a")
+
 #define clearfile(f) \
 		FILE *f = fopen("./results.txt", "w");\
 		fprintf(f, " ");\
@@ -28,7 +29,8 @@ class list{
 	private:
 		node *first;
 		node *last;
-		void link(node *&p);
+		void linkNode(node *&p);
+		void swapData(node *&p1, node *&p2);
 		void keyList();
 		void randList();
 		void fileList();
@@ -45,10 +47,16 @@ class list{
 		void sortList();
 };
 //----------------------------------------------------------------
-void list::link(node *&p){
+void list::linkNode(node *&p){
 	if(first==NULL) first = p;
 	else last->next = p;
 	last = p;
+}
+//----------------------------------------------------------------
+void list::swapData(node *&p1, node *&p2){
+	int temp = p1->value;
+	p1->value = p2->value;
+	p2->value = temp;
 }
 //----------------------------------------------------------------
  void list::revertList(){
@@ -57,7 +65,7 @@ void list::link(node *&p){
 	while(first!=NULL){
 		t1 = first;			// [t2]<-[],[t1=first]
 		first = first->next;// [t1]->[first]->
-		t1->next = t2;		// [t1]->[t2],[first]->
+		t1->next = t2;		// [t2]<-[t1],[first]->
 		t2 = t1;			// [t1=t2],[first]
 	}
 	first = t1;				// ..<-[first=t1]
@@ -76,7 +84,7 @@ void list::link(node *&p){
 			//tao va lien ket node vao danh sach
 			p = new node;
 			p->setNode(i);
-			link(p);
+			linkNode(p);
 			//----------------------
 		}
 		else if(key!="") cout<<"Du lieu nhap khong dung\n";
@@ -98,7 +106,7 @@ void list::link(node *&p){
 				p = new node;
 				i = rand()%1000-0; //lay ngau nhien gia tri 0 - 999
 				p->setNode(i);
-				link(p);
+				linkNode(p);
 			}
 		}
 		else cout<<"Do dai khong hop le\n";
@@ -116,7 +124,7 @@ void list::link(node *&p){
 			fscanf(f, "%d", &i);
 			p = new node;
 			p->setNode(i);
-			link(p);
+			linkNode(p);
 		}while(fgetc(f)!=EOF); //doc den ki tu cuoi file
 	}
 	fclose(f); //dong file sau khi doc
@@ -133,9 +141,9 @@ void list::link(node *&p){
 		cout<<"Lua chon: ";
 		cin>>opt;
 	}while(opt!='1' && opt!='2' && opt!='3' && opt!='4');
-	fflush(stdin); //xoa cache
 	cout<<endl; //xuong dong
 	//tao danh sach theo lua chon hoac thoat
+	fflush(stdin); //xoa cache
 	if(opt=='1') keyList();
 	else if(opt=='2') randList();
 	else if(opt=='3') fileList();
@@ -191,9 +199,7 @@ void list::link(node *&p){
 		j = i->next;
 		while(j!=NULL){
 			if(i->value > j->value){
-				temp = i->value;
-				i->value = j->value;
-				j->value = temp;
+				swapData(i, j);
 			}
 			j = j->next;
 		}
@@ -201,7 +207,20 @@ void list::link(node *&p){
 	}
 }
 //----------------------------------------------------------------
- void list::selectionSort(){}
+ void list::selectionSort(){
+	node *flag = first; //danh dau node dau danh sach
+	node *i, *min;
+	min = flag; //dat dau danh sach la node be nhat
+	while(flag->next!=NULL){
+		i = flag->next;
+		while(i!=NULL){
+			if(i->value < min->value) min = i; //cap nhat node be nhat
+			i = i->next;
+		}
+		if(min->value < flag->value) swapData(min, flag); //thay doi node dau danh sach
+		flag = flag->next;
+	}
+ }
 //----------------------------------------------------------------
  void list::insertionSort(){}
 //----------------------------------------------------------------
