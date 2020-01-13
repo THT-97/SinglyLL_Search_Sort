@@ -37,6 +37,7 @@ class list{
 		list(){first = NULL; last = NULL;}
 		void createList();
 		void getList();
+		void writeList();
 		void search();
 		void sortList();
 };
@@ -197,7 +198,10 @@ class list{
 	if(opt=='1') keyList();
 	else if(opt=='2') randList();
 	else if(opt=='3') fileList();
-	if(opt!='4') getList(); //in danh sach sau khi tao
+	if(opt!='4') {
+		getList(); //in danh sach
+		writeList(); //ghi danh sach ra file
+	}
 }
 //----------------------------------------------------------------
  void list::search(){
@@ -210,18 +214,23 @@ class list{
 		cout<<"\nNhap gia tri can tim: ";
 		cin>>i;
 		fflush(stdin); //xoa cache
+		clrscr();
+		cout<<"Gia tri can tim: "<<i;
 		fprintf(f, "\nGia tri can tim: %d\n", i);
+		getList();
 		cursor = first;
+		gotoXY(0, 2);
 		while(cursor != NULL){
 			if(cursor->value==i){
 				c++;
 				TextColor(11);
-			}	
+			}
+			else TextColor(14);	
 			cout<<cursor->value<<" ";
-			TextColor(15);
 			Sleep(300);
 			cursor = cursor->next;
 		}
+		TextColor(15);
 		if(c==0){
 			cout<<"\nKhong tim thay gia tri\n";
 			fprintf(f,"Khong tim thay gia tri\n");
@@ -236,24 +245,33 @@ class list{
 //----------------------------------------------------------------
  void list::getList(){
 	node *cursor = first;
-	writefile(f); //tao file ket qua
-	if(cursor==NULL){
-		cout<<"\nDanh sach trong\n";
-		fprintf(f, "Danh sach trong\n");
-	}
+	if(cursor==NULL) cout<<"\nDanh sach trong\n";
 	else{
 		cout<<"\nDanh sach:\n";
-		fprintf(f, "Danh sach:\n");
 		while(cursor!=NULL){
 			cout<<cursor->value<<" ";
-			fprintf(f, "%d ", cursor->value);
 			cursor = cursor->next;
 		}
 		cout<<endl;
+	}
+}
+//----------------------------------------------------------------
+ void list::writeList(){
+ 	node *cursor = first;
+ 	writefile(f); //tao file ket qua
+ 	cout<<"\nDang luu ket qua...\n";
+ 	if(cursor==NULL) fprintf(f, "Danh sach trong\n");
+	else{
+		fprintf(f, "Danh sach:\n");
+		while(cursor!=NULL){
+			fprintf(f, "%d ", cursor->value);
+			cursor = cursor->next;
+		}
 		fprintf(f, "\n");
 	}
+	cout<<"Da luu thanh cong\n";
 	fclose(f); //dong file sau khi ghi ket qua
-}
+ }
 //----------------------------------------------------------------
  void list::bubbleSort(char dir){
  	int temp;
