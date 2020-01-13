@@ -1,8 +1,9 @@
 // Tim kiem va sap xep tren danh sach lien ket OOP
-#include <iostream> //cin, cout, getline()
-#include <sstream> //stringstream
-#include <stdio.h> //cac thao tac tren file
-#include <time.h> //ham random
+#include <iostream>	//cin, cout
+#include <sstream>	//stringstream
+#include <stdio.h>	//cac thao tac tren file
+#include <time.h>	//ham random
+#include <string>
 
 #define readfile(f) FILE *f = fopen("./list_input.txt","r")
 #define writefile(f) FILE *f = fopen("./results.txt","a")
@@ -156,6 +157,7 @@ void list::swapData(node *&p1, node *&p2){
 	node *cursor;
 	cout<<"\nNhap gia tri can tim: ";
 	cin>>i;
+	fflush(stdin); //xoa cache
 	fprintf(f, "\nGia tri can tim: %d\n", i);
 	cursor = first;
 	while(cursor != NULL && cursor->value != i) cursor = cursor->next;
@@ -195,7 +197,7 @@ void list::swapData(node *&p1, node *&p2){
  	int temp;
 	node *i, *j;
 	i = first;
-	while(i->next!=NULL){
+	while(i!=last){
 		j = i->next;
 		while(j!=NULL){
 			if(i->value > j->value){
@@ -210,7 +212,7 @@ void list::swapData(node *&p1, node *&p2){
  void list::selectionSort(){
 	node *flag = first; //danh dau node can sap xep
 	node *i, *min;
-	while(flag->next!=NULL){
+	while(flag!=last){
 		min = flag; //dat node danh dau la node be nhat
 		i = flag->next;
 		while(i!=NULL){
@@ -222,7 +224,30 @@ void list::swapData(node *&p1, node *&p2){
 	}
  }
 //----------------------------------------------------------------
- void list::insertionSort(){}
+ void list::insertionSort(){
+ 	node *sorted = NULL; //tao danh sach sap xep
+ 	node *p = first;
+ 	node *pn;
+ 	while(p!=NULL){		//duyet danh sach
+ 		pn = p->next;	//luu nut tiep thep cua p vi nut nay se bi thay doi
+ 		//neu danh sach sap xep rong hoac nut p nho hon, them nut p vao dau danh sach
+ 		if(sorted == NULL || sorted->value >= p->value){
+ 			p->next = sorted;
+ 			sorted = p;
+		}
+		//tim vi tri thich hop de chen nut p vao danh sach sap xep
+		else{
+			node *i = sorted;
+			//duyet danh sach de tim nut co nut sau lon hon nut p
+			while(i->next!=NULL && i->next->value < p->value) i = i->next;
+			//chen nut p vao sau nut tim duoc
+			p->next = i->next;
+			i->next = p;
+		}
+ 		p = pn; //duyet nut tiep theo cua p
+	}
+	first = sorted; //chuyen con tro dau sang danh sach da sap xep
+ }
 //----------------------------------------------------------------
  void list::quickSort(){}
 //----------------------------------------------------------------
@@ -230,55 +255,60 @@ void list::swapData(node *&p1, node *&p2){
 //----------------------------------------------------------------
  void list::sortList(){
  	char opt;
- 	writefile(f);
- 	cout<<"\nChon phuong phap sap xep:\n";
- 	cout<<"1. Bubble sort\n";
- 	cout<<"2. Selection sort\n";
- 	cout<<"3. Insertion sort\n";
- 	cout<<"4. Quick sort\n";
- 	cout<<"5. Merge sort\n";
- 	
- 	do{
- 		cout<<"Lua chon: ";
- 		cin>>opt;
-	}while(opt!='1' && opt!='2' && opt!='3' && opt!='4' && opt!='5');
-	//Cac phuong thuc sap xep mac dinh la sap xep tang dan
-	switch(opt){
- 		case('1'): {
-		  	bubbleSort();
-			break;
-		 	}
-		case('2'):{
-		  	selectionSort();
-			break;
+ 	//tien hanh sap xep neu danh sach 
+ 	if(first->next!=NULL){
+ 		writefile(f);
+ 		cout<<"\nChon phuong phap sap xep:\n";
+ 		cout<<"1. Bubble sort\n";
+ 		cout<<"2. Selection sort\n";
+ 		cout<<"3. Insertion sort\n";
+ 		cout<<"4. Quick sort\n";
+ 		cout<<"5. Merge sort\n";
+ 		do{
+ 			cout<<"Lua chon: ";
+ 			cin>>opt;
+		}while(opt!='1' && opt!='2' && opt!='3' && opt!='4' && opt!='5');
+		fflush(stdin); //xoa cache
+		
+		//Cac phuong thuc sap xep mac dinh la sap xep tang dan
+		switch(opt){
+ 			case('1'): {
+			  	bubbleSort();
+				break;
+			 	}
+			case('2'):{
+			  	selectionSort();
+				break;
+			}
+			case('3'):{
+				insertionSort();
+				break;
+			}
+			case('4'):{
+				quickSort();
+				break;
+			}
+			case('5'):{
+				mergeSort();
+				break;
+			}
 		}
-		case('3'):{
-			insertionSort();
-			break;
-		}
-		case('4'):{
-			quickSort();
-			break;
-		}
-		case('5'):{
-			mergeSort();
-			break;
-		}
+		opt = 0; //dat lai bien lua chon
+		//chon chieu danh sach
+		cout<<"\nChon chieu sap xep\n";
+		cout<<"1. Tang dan\n";
+		cout<<"2. Giam dan\n";
+		do{
+			cout<<"Lua chon: ";
+			cin>>opt;
+		}while(opt!='1' && opt!='2');
+		fflush(stdin); //xoa cache
+		if(opt=='2') revertList(); //dao nguoc danh sach neu chon chieu giam dan
+		cout<<"\nDanh sach sau khi sap xep:";
+		fprintf(f,"\nDanh sach da sap xep:\n");
+		fclose(f);
+		getList();
 	}
-	opt = 0; //dat lai bien lua chon
-	//chon chieu danh sach
-	cout<<"\nChon chieu sap xep\n";
-	cout<<"1. Tang dan\n";
-	cout<<"2. Giam dan\n";
-	do{
-		cout<<"Lua chon: ";
-		cin>>opt;
-	}while(opt!='1' && opt!='2');
-	if(opt=='2') revertList(); //dao nguoc danh sach neu chon chieu giam dan
-	cout<<"\nDanh sach sau khi sap xep:";
-	fprintf(f,"\nDanh sach da sap xep:\n");
-	fclose(f);
-	getList();
  }
 //----------------------------------------------------------------
 int main(){
@@ -288,7 +318,7 @@ int main(){
 	l.createList();
 	l.search();
 	l.sortList();
-	cout<<"\nNhan nut bat ki de dong chuong trinh";
+	cout<<"\nNhan Enter de dong chuong trinh";
 	getchar();
 	return 0;
 }
