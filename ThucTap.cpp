@@ -1,46 +1,37 @@
-// Tim kiem va sap xep tren danh sach lien ket OOP
-#include <iostream>	//cin, cout
-#include <sstream>	//stringstream
-#include <stdio.h>	//cac thao tac tren file
-#include <time.h>	//ham random
-#include <string>
-
-#define readfile(f) FILE *f = fopen("./list_input.txt","r")
-#define writefile(f) FILE *f = fopen("./results.txt","a")
-
-#define clearfile(f) \
-		FILE *f = fopen("./results.txt", "w");\
-		fprintf(f, " ");\
-		fclose(f)
-		
+// Tim kiem va sap xep tren danh sach lien ket don OOP
+#include "libs.h"	
 using namespace std;
 
 class node{
-	protected:
+	private:
 		int value;
 		node *next;
+	//--------------------------
 		void setNode(int i){
 			value = i;
 			next = NULL;
 		}
-	friend class list; //class list co the truy xuat class node
+	friend class list;
 };
 
 class list{
 	private:
 		node *first;
 		node *last;
+	//--------------------	
 		void linkNode(node *&p);
 		void swapData(node *&p1, node *&p2);
+		node* getLast(node *f);
+		node* partition(node *pfirst, node *plast, node *&f, node *&l, char dir);
+		void halveList(node *f, node *&l1, node *&l2);
+		void mergeLists(node *&f, node *l1, node *l2, char dir);
 		void keyList();
 		void randList();
 		void fileList();
 		void bubbleSort(char dir);
 		void selectionSort(char dir);
 		void insertionSort(char dir);
-		void mergeSort(char dir);
-		node* getLast(node *f);
-		node* partition(node *pfirst, node *plast, node *&f, node *&l, char dir);
+		void mergeSort(node *&f, char dir);	
 		void quickSort(node *&pfirst, node *&plast, char dir);
 	public:
 		list(){first = NULL; last = NULL;}
@@ -76,8 +67,7 @@ class list{
 	//bat dau phan doan danh sach
 	while(i!=flag){
 		//nut dang xet nho/lon hon nut danh dau
-		if(i->value < flag->value && dir == '1'
-		   or i->value > flag->value && dir == '2'){
+		if((i->value < flag->value && dir =='1')or(i->value > flag->value && dir=='2')){
 			//dat nut dang xet lam nut dau danh sach phan doan
 			if(f==NULL) f = i;
 			prev = i;
@@ -99,6 +89,38 @@ class list{
 	l = t; //dat nut cuoi lam nut cuoi cua danh sach phan doan
 	return flag;
 }
+//----------------------------------------------------------------
+ void list::halveList(node *f, node *&l1, node *&l2){
+	node *i = f;
+	node *j = i->next;
+	//tang j 2 buoc, tang i 1 buoc
+	while(j!=NULL){
+		j = j->next;
+		if(j!=NULL){
+			i = i->next;
+			j = j->next;
+		}
+	}
+	//i nam truoc nut giua danh sach
+	//chia doi danh sach
+	l1 = f;
+	l2 = i->next;
+	i->next = NULL;
+ }
+//----------------------------------------------------------------
+ void list::mergeLists(node *&f, node *l1, node *l2, char dir){
+ 	f = NULL;
+ 	if(l1==NULL) f = l2;
+ 	else if(l2==NULL) f = l1;	
+	else if((l1->value < l2->value && dir=='1') or (l1->value > l2->value && dir=='2')){
+		f = l1;
+		mergeLists(f->next, l1->next, l2, dir);
+	}
+	else{
+		f = l2;
+		mergeLists(f->next, l1, l2->next, dir);
+	}
+ }
 //----------------------------------------------------------------
  void list::keyList(){
 	string key;
@@ -131,7 +153,7 @@ class list{
 		if(s>>n){
 			for(c=0; c<n; c++){
 				p = new node;
-				i = rand()%1000-0; //lay ngau nhien gia tri 0 - 999
+				i = rand()%101; //lay ngau nhien gia tri 0 - 100
 				p->setNode(i);
 				linkNode(p);
 			}
@@ -228,7 +250,7 @@ class list{
 	while(i!=last){
 		j = i->next;
 		while(j!=NULL){
-			if(i->value > j->value && dir == '1' or i->value < j->value && dir == '2')
+			if((i->value > j->value && dir=='1')or(i->value < j->value && dir=='2'))
 				swapData(i, j);
 			j = j->next;
 		}
@@ -243,11 +265,11 @@ class list{
 		m = flag; //dat node danh dau la node be/lon nhat
 		i = flag->next;
 		while(i!=NULL){
-			if(i->value < m->value  && dir == '1' or i->value > m->value  && dir == '2')
+			if((i->value < m->value  && dir=='1')or(i->value > m->value && dir=='2'))
 				m = i; //cap nhat node be/lon nhat
 			i = i->next;
 		}
-		if(m->value < flag->value && dir == '1' or m->value > flag->value && dir == '2' )
+		if((m->value < flag->value && dir=='1')or(m->value > flag->value && dir=='2'))
 			swapData(m, flag); //thay doi gia tri node dau danh sach
 		flag = flag->next;
 	}
@@ -260,8 +282,8 @@ class list{
  	while(p!=NULL){		//duyet danh sach
  		pn = p->next;	//luu nut tiep thep cua p vi nut nay se bi thay doi
  		//neu danh sach sap xep rong hoac nut p nho/lon hon nut dau
- 		if(sorted == NULL or sorted->value >= p->value && dir == '1'
-		 	or sorted->value < p->value && dir == '2'){
+ 		if(sorted == NULL or (sorted->value >= p->value && dir=='1')
+		 	or (sorted->value < p->value && dir=='2')){
 			//them nut p vao dau danh sach
  			p->next = sorted;
  			sorted = p;
@@ -270,9 +292,8 @@ class list{
 		else{
 			node *i = sorted;
 			//duyet danh sach de tim nut co nut sau lon/nho hon nut p
-			while(i->next!=NULL && i->next->value < p->value && dir == '1'
-				or i->next!=NULL && i->next->value > p->value && dir == '2'
-			)
+			while(i->next!=NULL && ((i->next->value < p->value && dir =='1')
+			 or(i->next->value > p->value && dir=='2')))
 				i = i->next;
 			//chen nut p vao sau nut tim duoc
 			p->next = i->next;
@@ -292,10 +313,9 @@ class list{
 		node *flag = partition(pfirst, plast, f, l, dir);
  		//neu dau phan doan khac nut danh dau
  		if(f!=flag){
- 		//cat phan doan moi tu phia ben trai danh sach
  			temp = f;
 			while(temp->next != flag) temp = temp->next;
- 			temp->next = NULL;
+ 			temp->next = NULL;	//cat phan doan moi tu phia ben trai danh sach
  			quickSort(f, temp, dir); //lap lai cac buoc sap xep cho phan doan moi	
  			temp = getLast(f);	//tim nut cuoi cua phan doan moi
  			temp->next = flag;	//lien ket phan doan moi vao lai danh sach
@@ -307,7 +327,17 @@ class list{
 	}
  }
 //----------------------------------------------------------------
- void list::mergeSort(char dir){}
+ void list::mergeSort(node *&f, char dir){
+ 	node *l1;
+	node *l2;
+	if(f!=NULL && f->next!=NULL){
+		halveList(f, l1, l2);//chia doi danh sach
+		//tiep tuc chia doi tung doan danh sach
+		mergeSort(l1, dir);
+		mergeSort(l2, dir);
+		mergeLists(f, l1, l2, dir);//tron danh sach
+	}
+ }
 //----------------------------------------------------------------
  void list::sortList(){
  	char opt, dir;
@@ -353,7 +383,7 @@ class list{
 				break;
 			}
 			case('5'):{
-				mergeSort(dir);
+				mergeSort(first, dir);
 				break;
 			}
 		}
@@ -372,7 +402,7 @@ int main(){
 	l->createList();
 	l->search();
 	l->sortList();
-	cout<<"\nNhan Enter de dong chuong trinh";
-	getchar();
+	cout<<"\nNhan nut bat ki de dong chuong trinh";
+	_getch();
 	return 0;
 }
