@@ -1,6 +1,6 @@
 // Tim kiem va sap xep tren danh sach lien ket don OOP
 #include "libs.h"	
-using namespace std;
+int W; //do rong man hinh
 
 class node{
 	private:
@@ -128,7 +128,7 @@ class list{
 	int i;
 	node *p;
 	do{
-		cout<<"Nhap so nguyen (Nhap ky tu trong de dung): ";
+		cout<<"Nhap so nguyen (Nhan Enter trong de dung): ";
 		getline(cin, key);
 		stringstream s(key);
 		if(s>>i){
@@ -226,7 +226,7 @@ class list{
 				TextColor(11);
 			}
 			else TextColor(14);	
-			cout<<cursor->value<<" ";
+			printf("%3d ", cursor->value);
 			Sleep(300);
 			cursor = cursor->next;
 		}
@@ -249,7 +249,7 @@ class list{
 	else{
 		cout<<"\nDanh sach:\n";
 		while(cursor!=NULL){
-			cout<<cursor->value<<" ";
+			printf("%3d ", cursor->value);
 			cursor = cursor->next;
 		}
 		cout<<endl;
@@ -275,17 +275,59 @@ class list{
 //----------------------------------------------------------------
  void list::bubbleSort(char dir){
  	int temp;
+ 	COORD ipos;
+ 	COORD jpos;
 	node *i, *j;
 	i = first;
+	ipos = {0,2};
 	while(i!=last){
+		//dat lai vi tri con tro
+		gotoXY(ipos.X, ipos.Y);
+		//cap nhat vi tri nut j
+		jpos.X = ipos.X+4;
+		if(jpos.X>=W) jpos.X=0;
+		else jpos.Y = ipos.Y;
 		j = i->next;
+		//----------------------
 		while(j!=NULL){
-			if((i->value > j->value && dir=='1')or(i->value < j->value && dir=='2'))
+			//in vi tri i, j dang xet
+			TextColor(14); //mau vang
+			gotoXY(ipos.X, ipos.Y);
+			printf("%3d", i->value);
+			gotoXY(jpos.X, jpos.Y);
+			printf("%3d", j->value);
+			Sleep(500);
+			//------------------------
+			if((i->value > j->value && dir=='1')or(i->value < j->value && dir=='2')){
 				swapData(i, j);
+				TextColor(11); //mau xanh
+			}
+			else TextColor(8); //mau xam
+			//in lai i, j
+			gotoXY(ipos.X, ipos.Y);
+			printf("%3d", i->value);
+			gotoXY(jpos.X, jpos.Y);
+			printf("%3d", j->value);
+			//cap nhat lai vi tri nut j
+			jpos.X = whereX() + 1;
+			if(jpos.X>=W){
+				jpos.X=0;
+				jpos.Y++;
+			}
+			//sang nut j tiep theo
 			j = j->next;
+			Sleep(500);
 		}
+		//cap nhat vi tri nut i
+		ipos.X+=4;
+		if(ipos.X>=W){
+			ipos.X = 0;
+			ipos.Y++;
+		}
+		//sang nut i tiep theo
 		i = i->next;
 	}
+	TextColor(15);
 }
 //----------------------------------------------------------------
  void list::selectionSort(char dir){
@@ -396,6 +438,8 @@ class list{
 			cin>>dir;
 			fflush(stdin); //xoa cache
 		}while(dir!='1' && dir!='2');
+		clrscr();
+		getList();
 		//Cac phuong thuc sap xep
 		switch(opt){
  			case('1'): {
@@ -419,24 +463,26 @@ class list{
 				break;
 			}
 		}
-		
-		cout<<"\nDanh sach sau khi sap xep:";
 		fprintf(f,"\nDanh sach da sap xep:\n");
 		fclose(f);
-		getList();
+		writeList();
 	}
  }
 //----------------------------------------------------------------
 int main(){
 	clearfile(f); //Xoa noi dung co san trong file ket qua
 	list *l = new list;
-	gotoXY(W/9, 0);
-	TextColor(14);
-	cout<<"---CHUONG TRINH TIM KIEM VA SAP XEP DANH SACH LIEN KET---\n";
-	TextColor(15);
-	l->createList();
-	l->search();
-	l->sortList();
+	W = getScreen();
+	//Tiep tuc chuong trinh neu man hinh du rong (80 ki tu tro len)
+	if(W>=79){
+		gotoXY(W/10, 0);
+		TextColor(14);
+		cout<<"---CHUONG TRINH MO PHONG TIM KIEM VA SAP XEP TREN DANH SACH LIEN KET---\n";
+		TextColor(15);
+		l->createList();
+		l->search();
+		l->sortList();	
+	}
 	cout<<"\nNhan nut bat ki de dong chuong trinh";
 	_getch();
 	return 0;
