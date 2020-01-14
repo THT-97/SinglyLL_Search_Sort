@@ -47,8 +47,7 @@
 using namespace std;
 //--------------------------------------------------------
 
-int inputKey()
-{
+int inputKey(){
 	if (_kbhit())
 	{
 		int key = _getch();
@@ -70,8 +69,7 @@ int inputKey()
 }
 
 //-------------------------Screen-------------------------
-void clrscr()
-{
+void clrscr(){
 	CONSOLE_SCREEN_BUFFER_INFO	csbiInfo;                  
 	HANDLE	hConsoleOut;
 	COORD	Home = {0,0};
@@ -88,8 +86,7 @@ void clrscr()
 
 
 //screen: goto [x,y]
-void gotoXY (int column, int line)
-{
+void gotoXY (int column, int line){
 	COORD coord;
 	coord.X = column;
 	coord.Y = line;
@@ -109,17 +106,30 @@ int whereY(){
     return csbi.dwCursorPosition.Y;
 }
 
-void TextColor (int color)
-{
+void TextColor (int color){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE) , color);
 }
-
 
 int getScreen(){
     CONSOLE_SCREEN_BUFFER_INFO csbi;
 	if(!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
 		cout<<"Khong lay duoc kich thuoc man hinh"<<endl;
 	else return csbi.srWindow.Right-csbi.srWindow.Left;
+}
+
+void lineCheck(COORD &pos, int screenWidth){
+	if(pos.X >= screenWidth){
+			pos.X = 0;
+			pos.Y++;
+		}
+}
+
+void lineCheck(COORD &pos1, COORD pos2, int screenWidth){
+	if(pos1.X >= screenWidth){
+			pos1.X = 0;
+			pos1.Y++;
+	}
+	else pos1.Y = pos2.Y;
 }
 
 #endif

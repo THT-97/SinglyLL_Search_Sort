@@ -285,8 +285,7 @@ class list{
 		gotoXY(ipos.X, ipos.Y);
 		//cap nhat vi tri nut j
 		jpos.X = ipos.X+4;
-		if(jpos.X>=W) jpos.X=0;
-		else jpos.Y = ipos.Y;
+		lineCheck(jpos, ipos, W);
 		j = i->next;
 		//----------------------
 		while(j!=NULL){
@@ -302,7 +301,7 @@ class list{
 				swapData(i, j);
 				TextColor(11); //mau xanh
 			}
-			else TextColor(8); //mau xam
+			else TextColor(15); //mau trang
 			//in lai i, j
 			gotoXY(ipos.X, ipos.Y);
 			printf("%3d", i->value);
@@ -310,39 +309,75 @@ class list{
 			printf("%3d", j->value);
 			//cap nhat lai vi tri nut j
 			jpos.X = whereX() + 1;
-			if(jpos.X>=W){
-				jpos.X=0;
-				jpos.Y++;
-			}
+			lineCheck(jpos, W);
 			//sang nut j tiep theo
 			j = j->next;
-			Sleep(500);
+			Sleep(300);
 		}
 		//cap nhat vi tri nut i
 		ipos.X+=4;
-		if(ipos.X>=W){
-			ipos.X = 0;
-			ipos.Y++;
-		}
+		lineCheck(ipos, W);
 		//sang nut i tiep theo
 		i = i->next;
 	}
-	TextColor(15);
 }
 //----------------------------------------------------------------
  void list::selectionSort(char dir){
 	node *flag = first; //danh dau node can sap xep
 	node *i, *m;
+	COORD ipos, mpos, fpos;
+	fpos = {0,2};
 	while(flag!=last){
-		m = flag; //dat node danh dau la node be/lon nhat
-		i = flag->next;
+		m = flag; 			//dat node danh dau la node be/lon nhat
+		mpos = fpos;		//cap nhat vi tri node be/lon nhat
+		i = flag->next;		//bat dau duyet tu node tiep theo
+		ipos.X = fpos.X+4;	//cap nhat vi tri node i
+		lineCheck(ipos, fpos, W);
 		while(i!=NULL){
-			if((i->value < m->value  && dir=='1')or(i->value > m->value && dir=='2'))
-				m = i; //cap nhat node be/lon nhat
+			//in lai node flag, i
+			TextColor(12);//mau do
+			gotoXY(fpos.X, fpos.Y);
+			printf("%3d", flag->value);
+			TextColor(8);//mau xam
+			gotoXY(ipos.X, ipos.Y);
+			printf("%3d", i->value);
+			Sleep(300);
+			if((i->value < m->value  && dir=='1')or(i->value > m->value && dir=='2')){
+				//in lai node m hien tai
+				if(mpos.X!=fpos.X) TextColor(15); //mau trang neu khong trung voi node flag
+				gotoXY(mpos.X, mpos.Y);
+				printf("%3d", m->value);
+				m = i; //cap nhat node m
+				mpos = ipos;
+				TextColor(14);//chuyen node i thanh mau vang
+			}
+			else TextColor(15);//chuyen node i thanh mau trang
+			//in lai node i
+			gotoXY(ipos.X, ipos.Y);
+			printf("%3d", i->value);
+			//cap nhat vi tri node i
+			ipos.X +=4;
+			lineCheck(ipos,W);
 			i = i->next;
+			Sleep(300);
 		}
-		if((m->value < flag->value && dir=='1')or(m->value > flag->value && dir=='2'))
+		if((m->value < flag->value && dir=='1')or(m->value > flag->value && dir=='2')){
 			swapData(m, flag); //thay doi gia tri node dau danh sach
+			//in lai cac node bi thay doi
+			TextColor(11); 		//mau xanh
+			gotoXY(fpos.X, fpos.Y);
+			printf("%3d", flag->value);
+			gotoXY(mpos.X, mpos.Y);
+			printf("%3d", m->value);
+			Sleep(300);
+			TextColor(15);//chuyen node flag hien tai thanh mau trang
+		}
+		//in lai node flag
+		gotoXY(fpos.X, fpos.Y);
+		printf("%3d", flag->value);
+		//cap nhat vi tri node flag
+		fpos.X += 4;
+		lineCheck(fpos, W);
 		flag = flag->next;
 	}
  }
@@ -463,6 +498,7 @@ class list{
 				break;
 			}
 		}
+		TextColor(15);
 		fprintf(f,"\nDanh sach da sap xep:\n");
 		fclose(f);
 		writeList();
