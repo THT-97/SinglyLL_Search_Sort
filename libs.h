@@ -1,12 +1,12 @@
 // basic console functions, collected by Nguyen Trung Thanh
 // abcxyz tcIT
-#include <stdio.h>
-#include <conio.h>
+#include <stdio.h>	//printf
+#include <conio.h>	//_getch
 #include <iostream>	//cin, cout
 #include <sstream>	//stringstream
-#include <time.h>	//ham random
-#include <string>
-#include <windows.h>
+#include <time.h>	//time random
+#include <string>	//getline
+#include <windows.h>//cac thao tac tren man hinh
 //--------------------------------------------------------
 #define readfile(f) FILE *f = fopen("./list_input.txt","r")
 #define writefile(f) FILE *f = fopen("./results.txt","a")
@@ -37,10 +37,11 @@
 #define ColorCode_White			15
 #define default_ColorCode		7
 
-#define key_Up		1072
-#define key_Down	1080
-#define key_Left	1075
-#define key_Right	1077
+#define key_Enter	13
+#define key_Up		72
+#define key_Down	80
+#define key_Left	75
+#define key_Right	77
 #define key_none	-1
 
 //--------------------------------------------------------
@@ -55,7 +56,7 @@ int inputKey(){
 		if (key == 224)	// special key
 		{
 			key = _getch();
-			return key + 1000;
+			return key;
 		}
 
 		return key;

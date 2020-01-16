@@ -22,17 +22,17 @@ class list{
 		void linkNode(node *&p);
 		void swapData(node *&p1, node *&p2);
 		node* getLast(node *f);
-		node* partition(node *pfirst, node *plast, node *&f, node *&l, char dir);
+		node* partition(node *pfirst, node *plast, node *&f, node *&l, int dir);
 		void halveList(node *f, node *&l1, node *&l2);
-		void mergeLists(node *&f, node *l1, node *l2, char dir);
+		void mergeLists(node *&f, node *l1, node *l2, int dir);
 		void keyList();
 		void randList();
 		void fileList();
-		void bubbleSort(char dir);
-		void selectionSort(char dir);
-		void insertionSort(char dir);
-		void mergeSort(node *&f, char dir);	
-		void quickSort(node *&pfirst, node *&plast, char dir);
+		void bubbleSort(int dir);
+		void selectionSort(int dir);
+		void insertionSort(int dir);
+		void mergeSort(node *&f, int dir);	
+		void quickSort(node *&pfirst, node *&plast, int dir);
 	public:
 		list(){first = NULL; last = NULL;}
 		void createList();
@@ -59,7 +59,7 @@ class list{
  	return f;
  }
 //----------------------------------------------------------------
- node* list::partition(node *pfirst, node *plast, node *&f, node *&l, char dir){
+ node* list::partition(node *pfirst, node *plast, node *&f, node *&l, int dir){
 	node *flag = plast; //danh dau nut cuoi danh sach
 	node *i = pfirst;
 	node *prev = NULL;
@@ -68,7 +68,7 @@ class list{
 	//bat dau phan doan danh sach
 	while(i!=flag){
 		//nut dang xet nho/lon hon nut danh dau
-		if((i->value < flag->value && dir =='1')or(i->value > flag->value && dir=='2')){
+		if((i->value < flag->value && dir == 1)or(i->value > flag->value && dir== 2)){
 			//dat nut dang xet lam nut dau phan doan
 			if(f==NULL) f = i;
 			prev = i;
@@ -109,11 +109,11 @@ class list{
 	i->next = NULL;
  }
 //----------------------------------------------------------------
- void list::mergeLists(node *&f, node *l1, node *l2, char dir){
+ void list::mergeLists(node *&f, node *l1, node *l2, int dir){
  	f = NULL;
  	if(l1==NULL) f = l2;
  	else if(l2==NULL) f = l1;	
-	else if((l1->value < l2->value && dir=='1') or (l1->value > l2->value && dir=='2')){
+	else if((l1->value < l2->value && dir==1) or (l1->value > l2->value && dir==2)){
 		f = l1;
 		mergeLists(f->next, l1->next, l2, dir);
 	}
@@ -180,25 +180,35 @@ class list{
 }
 //----------------------------------------------------------------
  void list::createList(){
-	char opt; //lua chon cach tao danh sach
-	TextColor(7);
+	int opt = 1; //lua chon cach tao danh sach
+	int key;
+	TextColor(ColorCode_DarkWhite);
 	cout<<"Chon cach nhap danh sach:\n";
-	TextColor(15);
-	cout<<"1. Nhap tu ban phim\n";
-	cout<<"2. Lay so ngau nhien\n";
-	cout<<"3. Doc so tu file 'list_input.txt'\n";
-	cout<<"4. Thoat\n";
+	TextColor(ColorCode_White);
+	cout<<">1. Nhap tu ban phim\n";
+	cout<<" 2. Lay so ngau nhien\n";
+	cout<<" 3. Doc so tu file 'list_input.txt'\n";
+	cout<<" 4. Thoat\n";
+	gotoXY(0,2);
 	do{
-		cout<<"Lua chon: ";
-		cin>>opt;
-		fflush(stdin); //xoa cache
-	}while(opt!='1' && opt!='2' && opt!='3' && opt!='4');
+		int old = opt;
+		key = inputKey();
+		if(key == key_Up && opt>1) opt--;
+		else if(key == key_Down && opt<4) opt++;
+		if(old!=opt){
+			gotoXY(0,whereY());
+			cout<<" ";
+			gotoXY(0, 1+opt);
+			cout<<">";	
+		}
+	}while(key!=13);
 	cout<<endl; //xuong dong
 	//tao danh sach theo lua chon hoac thoat
-	if(opt=='1') keyList();
-	else if(opt=='2') randList();
-	else if(opt=='3') fileList();
-	if(opt!='4') {
+	clrscr();
+	if(opt==1) keyList();
+	else if(opt==2) randList();
+	else if(opt==3) fileList();
+	if(opt!=4) {
 		getList(); //in danh sach
 		writeList(); //ghi danh sach ra file
 	}
@@ -206,11 +216,10 @@ class list{
 //----------------------------------------------------------------
  void list::search(){
 	int i;
-	//Thuc hien tim kiem khi danh sach co nut
-	if(first!=NULL){
-		writefile(f); //ghi tiep vao file ket qua
+	if(first!=NULL){	//Thuc hien tim kiem khi danh sach co nut
+		writefile(f); 	//ghi tiep vao file ket qua
 		node *cursor;
-		int c = 0;
+		int c = 0;		//dem so node tim duoc
 		cout<<"\nNhap gia tri can tim: ";
 		cin>>i;
 		fflush(stdin); //xoa cache
@@ -225,12 +234,12 @@ class list{
 				c++;
 				TextColor(11);
 			}
-			else TextColor(14);	
+			else TextColor(ColorCode_Yellow);	
 			printf("%3d ", cursor->value);
 			Sleep(300);
 			cursor = cursor->next;
 		}
-		TextColor(15);
+		TextColor(ColorCode_White);
 		if(c==0){
 			cout<<"\nKhong tim thay gia tri\n";
 			fprintf(f,"Khong tim thay gia tri\n");
@@ -273,7 +282,7 @@ class list{
 	fclose(f); //dong file sau khi ghi ket qua
  }
 //----------------------------------------------------------------
- void list::bubbleSort(char dir){
+ void list::bubbleSort(int dir){
  	int temp;
  	COORD ipos;
  	COORD jpos;
@@ -290,18 +299,18 @@ class list{
 		//----------------------
 		while(j!=NULL){
 			//in vi tri i, j dang xet
-			TextColor(14); //mau vang
+			TextColor(ColorCode_Yellow);
 			gotoXY(ipos.X, ipos.Y);
 			printf("%3d", i->value);
 			gotoXY(jpos.X, jpos.Y);
 			printf("%3d", j->value);
 			Sleep(500);
 			//------------------------
-			if((i->value > j->value && dir=='1')or(i->value < j->value && dir=='2')){
+			if((i->value > j->value && dir==1)or(i->value < j->value && dir==2)){
 				swapData(i, j);
-				TextColor(11); //mau xanh
+				TextColor(ColorCode_Cyan);
 			}
-			else TextColor(15); //mau trang
+			else TextColor(ColorCode_White);
 			//in lai i, j
 			gotoXY(ipos.X, ipos.Y);
 			printf("%3d", i->value);
@@ -322,7 +331,7 @@ class list{
 	}
 }
 //----------------------------------------------------------------
- void list::selectionSort(char dir){
+ void list::selectionSort(int dir){
 	node *flag = first; //danh dau node can sap xep
 	node *i, *m;
 	COORD ipos, mpos, fpos;
@@ -335,23 +344,23 @@ class list{
 		lineCheck(ipos, fpos, W);
 		while(i!=NULL){
 			//in lai node flag, i
-			TextColor(12);//mau do
+			TextColor(ColorCode_Red);
 			gotoXY(fpos.X, fpos.Y);
 			printf("%3d", flag->value);
-			TextColor(8);//mau xam
+			TextColor(ColorCode_Grey);
 			gotoXY(ipos.X, ipos.Y);
 			printf("%3d", i->value);
 			Sleep(300);
 			if((i->value < m->value  && dir=='1')or(i->value > m->value && dir=='2')){
 				//in lai node m hien tai
-				if(mpos.X!=fpos.X) TextColor(15); //mau trang neu khong trung voi node flag
+				if(mpos.X!=fpos.X) TextColor(ColorCode_White);
 				gotoXY(mpos.X, mpos.Y);
 				printf("%3d", m->value);
 				m = i; //cap nhat node m
 				mpos = ipos;
-				TextColor(14);//chuyen node i thanh mau vang
+				TextColor(ColorCode_Yellow);//chuyen node i thanh mau vang
 			}
-			else TextColor(15);//chuyen node i thanh mau trang
+			else TextColor(ColorCode_White);//chuyen node i thanh mau trang
 			//in lai node i
 			gotoXY(ipos.X, ipos.Y);
 			printf("%3d", i->value);
@@ -364,13 +373,13 @@ class list{
 		if((m->value < flag->value && dir=='1')or(m->value > flag->value && dir=='2')){
 			swapData(m, flag); //thay doi gia tri node dau danh sach
 			//in lai cac node bi thay doi
-			TextColor(11); 		//mau xanh
+			TextColor(ColorCode_Cyan);
 			gotoXY(fpos.X, fpos.Y);
 			printf("%3d", flag->value);
 			gotoXY(mpos.X, mpos.Y);
 			printf("%3d", m->value);
 			Sleep(300);
-			TextColor(15);//chuyen node flag hien tai thanh mau trang
+			TextColor(ColorCode_White);//chuyen node flag hien tai thanh mau trang
 		}
 		//in lai node flag
 		gotoXY(fpos.X, fpos.Y);
@@ -382,15 +391,15 @@ class list{
 	}
  }
 //----------------------------------------------------------------
- void list::insertionSort(char dir){
+ void list::insertionSort(int dir){
  	node *sorted = NULL; //tao danh sach sap xep
  	node *p = first;
  	node *pn;
  	while(p!=NULL){		//duyet danh sach
  		pn = p->next;	//luu nut tiep thep cua p vi nut nay se bi thay doi
  		//neu danh sach sap xep rong hoac nut p nho/lon hon nut dau
- 		if(sorted == NULL or (sorted->value >= p->value && dir=='1')
-		 	or (sorted->value < p->value && dir=='2')){
+ 		if(sorted == NULL or (sorted->value >= p->value && dir==1)
+		 	or (sorted->value < p->value && dir==2)){
 			//them nut p vao dau danh sach
  			p->next = sorted;
  			sorted = p;
@@ -399,8 +408,8 @@ class list{
 		else{
 			node *i = sorted;
 			//duyet danh sach de tim nut co nut sau lon/nho hon nut p
-			while(i->next!=NULL && ((i->next->value < p->value && dir =='1')
-			 or(i->next->value > p->value && dir=='2')))
+			while(i->next!=NULL && ((i->next->value < p->value && dir == 1)
+			 or(i->next->value > p->value && dir==2)))
 				i = i->next;
 			//chen nut p vao sau nut tim duoc
 			p->next = i->next;
@@ -411,7 +420,7 @@ class list{
 	first = sorted; //chuyen con tro dau sang danh sach da sap xep
  }
 //----------------------------------------------------------------
- void list::quickSort(node *&pfirst, node *&plast, char dir){
+ void list::quickSort(node *&pfirst, node *&plast, int dir){
  	//neu phan doan co nhieu hon 2 nut
  	if(pfirst!=NULL && pfirst != plast){
  		node *temp;
@@ -434,7 +443,7 @@ class list{
 	}
  }
 //----------------------------------------------------------------
- void list::mergeSort(node *&f, char dir){
+ void list::mergeSort(node *&f, int dir){
  	node *l1;
 	node *l2;
 	if(f!=NULL && f->next!=NULL){
@@ -447,58 +456,78 @@ class list{
  }
 //----------------------------------------------------------------
  void list::sortList(){
- 	char opt, dir;
+ 	int opt = 1;
+	int dir = 1;
+	int y, key;
  	//tien hanh sap xep neu danh sach co nhieu hon mot nut
  	if(first!=NULL && first->next!=NULL){
  		writefile(f);
- 		TextColor(7);
+ 		TextColor(ColorCode_White);
  		cout<<"\nChon phuong phap sap xep:\n";
- 		TextColor(15);
- 		cout<<"1. Bubble sort\n";
- 		cout<<"2. Selection sort\n";
- 		cout<<"3. Insertion sort\n";
- 		cout<<"4. Quick sort\n";
- 		cout<<"5. Merge sort\n";
+ 		y = whereY();
+ 		cout<<">1. Bubble sort\n";
+ 		cout<<" 2. Selection sort\n";
+ 		cout<<" 3. Insertion sort\n";
+ 		cout<<" 4. Quick sort\n";
+ 		cout<<" 5. Merge sort\n";
+ 		gotoXY(0,y);
  		do{
- 			cout<<"Lua chon: ";
- 			cin>>opt;
-			fflush(stdin); //xoa cache
-		}while(opt!='1' && opt!='2' && opt!='3' && opt!='4' && opt!='5');
-		//chon chieu danh sach
-		cout<<"\nChon chieu sap xep\n";
-		cout<<"1. Tang dan\n";
-		cout<<"2. Giam dan\n";
+ 			int old = opt;
+ 			key = inputKey();
+ 			if(key == key_Up && opt>1) opt--;
+ 			else if(key == key_Down && opt<5) opt++;
+ 			if(old != opt){
+ 				gotoXY(0,whereY());
+				cout<<" ";
+				gotoXY(0, y-1+opt);
+				cout<<">";
+			}
+		}while(key != key_Enter);
+		clrscr();
+		cout<<"Chon chieu sap xep\n";
+		cout<<">1. Tang dan\n";
+		cout<<" 2. Giam dan\n";
+		gotoXY(0,1);
 		do{
-			cout<<"Lua chon: ";
-			cin>>dir;
-			fflush(stdin); //xoa cache
-		}while(dir!='1' && dir!='2');
+			key = inputKey();
+			int old = dir;
+ 			if(key == key_Up && dir>1) dir--;
+ 			else if(key == key_Down && dir<2) dir++;
+ 			if(old != dir){
+ 				gotoXY(0,whereY());
+				cout<<" ";
+				gotoXY(0, dir);
+				cout<<">";
+			}
+		}while(key != key_Enter);
 		clrscr();
 		getList();
 		//Cac phuong thuc sap xep
 		switch(opt){
- 			case('1'): {
+ 			case(1): {
 			  	bubbleSort(dir);
 				break;
 			 	}
-			case('2'):{
+			case(2):{
 			  	selectionSort(dir);
 				break;
 			}
-			case('3'):{
+			case(3):{
 				insertionSort(dir);
 				break;
 			}
-			case('4'):{
+			case(4):{
 				quickSort(first, last, dir);
 				break;
 			}
-			case('5'):{
+			case(5):{
 				mergeSort(first, dir);
 				break;
 			}
 		}
 		TextColor(15);
+		cout<<"\nDanh sach da sap xep:\n";
+		getList();
 		fprintf(f,"\nDanh sach da sap xep:\n");
 		fclose(f);
 		writeList();
@@ -517,7 +546,7 @@ int main(){
 		TextColor(15);
 		l->createList();
 		l->search();
-		l->sortList();	
+		l->sortList();
 	}
 	cout<<"\nNhan nut bat ki de dong chuong trinh";
 	_getch();
