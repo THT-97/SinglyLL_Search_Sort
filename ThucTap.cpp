@@ -67,14 +67,11 @@ class list{
 	node *t = flag;
 	//bat dau phan doan danh sach
 	while(i!=flag){
-		//nut dang xet nho/lon hon nut danh dau
 		if((i->value < flag->value && dir == 1)or(i->value > flag->value && dir== 2)){
-			//dat nut dang xet lam nut dau phan doan
 			if(f==NULL) f = i;
 			prev = i;
 			i = i->next;
 		}
-		//cac truong hop con lai
 		else{
 			//dat nut dang xet ra sau nut cuoi danh sach
 			if(prev) prev->next = i->next;
@@ -284,49 +281,37 @@ class list{
 //----------------------------------------------------------------
  void list::bubbleSort(int dir){
  	int temp;
- 	COORD ipos;
- 	COORD jpos;
+ 	COORD ipos, jpos;
 	node *i, *j;
-	i = first;
-	ipos = {0,2};
+	i = first; ipos = {0,2};
 	while(i!=last){
 		//dat lai vi tri con tro
 		gotoXY(ipos.X, ipos.Y);
 		//cap nhat vi tri nut j
-		jpos.X = ipos.X+4;
-		lineCheck(jpos, ipos, W);
+		jpos.X = ipos.X+4; lineCheck(jpos, ipos, W);
 		j = i->next;
 		//----------------------
 		while(j!=NULL){
 			//in vi tri i, j dang xet
 			TextColor(ColorCode_Yellow);
-			gotoXY(ipos.X, ipos.Y);
-			printf("%3d", i->value);
-			gotoXY(jpos.X, jpos.Y);
-			printf("%3d", j->value);
+			gotoXY(ipos.X, ipos.Y); printf("%3d", i->value);
+			gotoXY(jpos.X, jpos.Y);	printf("%3d", j->value);
 			Sleep(500);
 			//------------------------
 			if((i->value > j->value && dir==1)or(i->value < j->value && dir==2)){
-				swapData(i, j);
-				TextColor(ColorCode_Cyan);
+				swapData(i, j); TextColor(ColorCode_Cyan);
 			}
 			else TextColor(ColorCode_White);
 			//in lai i, j
-			gotoXY(ipos.X, ipos.Y);
-			printf("%3d", i->value);
-			gotoXY(jpos.X, jpos.Y);
-			printf("%3d", j->value);
+			gotoXY(ipos.X, ipos.Y); printf("%3d", i->value);
+			gotoXY(jpos.X, jpos.Y); printf("%3d", j->value);
 			//cap nhat lai vi tri nut j
-			jpos.X = whereX() + 1;
-			lineCheck(jpos, W);
-			//sang nut j tiep theo
+			jpos.X = whereX() + 1; lineCheck(jpos, W);	
 			j = j->next;
 			Sleep(300);
 		}
 		//cap nhat vi tri nut i
-		ipos.X+=4;
-		lineCheck(ipos, W);
-		//sang nut i tiep theo
+		ipos.X+=4; lineCheck(ipos, W);
 		i = i->next;
 	}
 }
@@ -344,49 +329,38 @@ class list{
 		lineCheck(ipos, fpos, W);
 		while(i!=NULL){
 			//in lai node flag, i
-			TextColor(ColorCode_Red);
-			gotoXY(fpos.X, fpos.Y);
-			printf("%3d", flag->value);
-			TextColor(ColorCode_Grey);
-			gotoXY(ipos.X, ipos.Y);
-			printf("%3d", i->value);
+			TextColor(ColorCode_Red); gotoXY(fpos.X, fpos.Y);
+			printf("%3d", flag->value); TextColor(ColorCode_Grey);
+			gotoXY(ipos.X, ipos.Y); printf("%3d", i->value);
 			Sleep(300);
-			if((i->value < m->value  && dir=='1')or(i->value > m->value && dir=='2')){
+			if((i->value < m->value  && dir==1)or(i->value > m->value && dir==2)){
 				//in lai node m hien tai
 				if(mpos.X!=fpos.X) TextColor(ColorCode_White);
-				gotoXY(mpos.X, mpos.Y);
-				printf("%3d", m->value);
+				gotoXY(mpos.X, mpos.Y); printf("%3d", m->value);
 				m = i; //cap nhat node m
 				mpos = ipos;
 				TextColor(ColorCode_Yellow);//chuyen node i thanh mau vang
 			}
 			else TextColor(ColorCode_White);//chuyen node i thanh mau trang
 			//in lai node i
-			gotoXY(ipos.X, ipos.Y);
-			printf("%3d", i->value);
+			gotoXY(ipos.X, ipos.Y); printf("%3d", i->value);
 			//cap nhat vi tri node i
-			ipos.X +=4;
-			lineCheck(ipos,W);
+			ipos.X +=4; lineCheck(ipos,W);
 			i = i->next;
 			Sleep(300);
 		}
-		if((m->value < flag->value && dir=='1')or(m->value > flag->value && dir=='2')){
+		if((m->value < flag->value && dir==1)or(m->value > flag->value && dir==2)){
 			swapData(m, flag); //thay doi gia tri node dau danh sach
 			//in lai cac node bi thay doi
 			TextColor(ColorCode_Cyan);
-			gotoXY(fpos.X, fpos.Y);
-			printf("%3d", flag->value);
-			gotoXY(mpos.X, mpos.Y);
-			printf("%3d", m->value);
+			gotoXY(fpos.X, fpos.Y); printf("%3d", flag->value);
+			gotoXY(mpos.X, mpos.Y); printf("%3d", m->value);
 			Sleep(300);
 			TextColor(ColorCode_White);//chuyen node flag hien tai thanh mau trang
 		}
-		//in lai node flag
-		gotoXY(fpos.X, fpos.Y);
-		printf("%3d", flag->value);
+		gotoXY(fpos.X, fpos.Y); printf("%3d", flag->value);
 		//cap nhat vi tri node flag
-		fpos.X += 4;
-		lineCheck(fpos, W);
+		fpos.X += 4; lineCheck(fpos, W);
 		flag = flag->next;
 	}
  }
@@ -525,7 +499,7 @@ class list{
 				break;
 			}
 		}
-		TextColor(15);
+		TextColor(ColorCode_White);
 		cout<<"\nDanh sach da sap xep:\n";
 		getList();
 		fprintf(f,"\nDanh sach da sap xep:\n");

@@ -49,23 +49,15 @@ using namespace std;
 //--------------------------------------------------------
 
 int inputKey(){
-	if (_kbhit())
-	{
+	if (_kbhit()){
 		int key = _getch();
-
-		if (key == 224)	// special key
-		{
+		if (key == 224){	// special key
 			key = _getch();
 			return key;
 		}
-
 		return key;
 	}
-	else
-	{
-		return key_none;
-	}
-
+	else return key_none;
 	return key_none;
 }
 
