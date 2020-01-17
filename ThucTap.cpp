@@ -182,10 +182,10 @@ class list{
 	TextColor(ColorCode_DarkWhite);
 	cout<<"Chon cach nhap danh sach:\n";
 	TextColor(ColorCode_White);
-	cout<<">1. Nhap tu ban phim\n";
-	cout<<" 2. Lay so ngau nhien\n";
-	cout<<" 3. Doc so tu file 'list_input.txt'\n";
-	cout<<" 4. Thoat\n";
+	cout<<"> 1. Nhap tu ban phim\n";
+	cout<<"  2. Lay so ngau nhien\n";
+	cout<<"  3. Doc so tu file 'list_input.txt'\n";
+	cout<<"  4. Thoat\n";
 	gotoXY(0,2);
 	do{
 		int old = opt;
@@ -330,8 +330,9 @@ class list{
 		while(i!=NULL){
 			//in lai node flag, i
 			TextColor(ColorCode_Red); gotoXY(fpos.X, fpos.Y);
-			printf("%3d", flag->value); TextColor(ColorCode_Grey);
-			gotoXY(ipos.X, ipos.Y); printf("%3d", i->value);
+			printf("%3d", flag->value);
+			TextColor(ColorCode_Grey); gotoXY(ipos.X, ipos.Y);
+			printf("%3d", i->value);
 			Sleep(300);
 			if((i->value < m->value  && dir==1)or(i->value > m->value && dir==2)){
 				//in lai node m hien tai
@@ -395,7 +396,7 @@ class list{
  }
 //----------------------------------------------------------------
  void list::quickSort(node *&pfirst, node *&plast, int dir){
- 	//neu phan doan co nhieu hon 2 nut
+ 	//neu phan doan co nhieu hon 1 nut
  	if(pfirst!=NULL && pfirst != plast){
  		node *temp;
 		node *f=NULL;
@@ -439,11 +440,11 @@ class list{
  		TextColor(ColorCode_White);
  		cout<<"\nChon phuong phap sap xep:\n";
  		y = whereY();
- 		cout<<">1. Bubble sort\n";
- 		cout<<" 2. Selection sort\n";
- 		cout<<" 3. Insertion sort\n";
- 		cout<<" 4. Quick sort\n";
- 		cout<<" 5. Merge sort\n";
+ 		cout<<"> 1. Bubble sort\n";
+ 		cout<<"  2. Selection sort\n";
+ 		cout<<"  3. Insertion sort\n";
+ 		cout<<"  4. Quick sort\n";
+ 		cout<<"  5. Merge sort\n";
  		gotoXY(0,y);
  		do{
  			int old = opt;
@@ -459,8 +460,8 @@ class list{
 		}while(key != key_Enter);
 		clrscr();
 		cout<<"Chon chieu sap xep\n";
-		cout<<">1. Tang dan\n";
-		cout<<" 2. Giam dan\n";
+		cout<<"> 1. Tang dan\n";
+		cout<<"  2. Giam dan\n";
 		gotoXY(0,1);
 		do{
 			key = inputKey();
@@ -511,11 +512,12 @@ class list{
 int main(){
 	clearfile(f); //Xoa noi dung co san trong file ket qua
 	list *l = new list;
-	W = getScreen();
+	W = getScreen(); //W la bien toan cuc
+	ShowCursor(false);
 	//Tiep tuc chuong trinh neu man hinh du rong (80 ki tu tro len)
 	if(W>=79){
 		gotoXY(W/10, 0);
-		TextColor(14);
+		TextColor(ColorCode_Yellow);
 		cout<<"---CHUONG TRINH MO PHONG TIM KIEM VA SAP XEP TREN DANH SACH LIEN KET---\n";
 		TextColor(15);
 		l->createList();

@@ -110,6 +110,17 @@ int getScreen(){
 	else return csbi.srWindow.Right-csbi.srWindow.Left;
 }
 
+void ShowCursor(bool showFlag)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_CURSOR_INFO     cursorInfo;
+
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
+}
+
 void lineCheck(COORD &pos, int screenWidth){
 	if(pos.X >= screenWidth){
 			pos.X = 0;
